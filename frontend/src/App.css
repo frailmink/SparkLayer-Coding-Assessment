@@ -13,6 +13,8 @@
 }
 
 .todo {
+  position: relative;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -53,6 +55,13 @@
   color: #ddd;
 
   text-align: left;
+}
+
+.todo-completed {
+  position: absolute;
+
+  left: 15px;
+  top: 25px;
 }
 
 .todo-list {

@@ -14,6 +14,7 @@ type Todo struct {
 	ID 			string `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	Completed 	bool `json:"completed"`
 }
 
 // InMemoryStore represents our in-memory database
@@ -42,10 +43,24 @@ func (s *InMemoryStore) GetTodos() []Todo {
 	return s.todos
 }
 
+// function that will change the value of the variable completed for the specific Todo item in the db
+func (s *InMemoryStore) ToggleTodo(id string) (Todo, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	
+	for i := range s.todos {
+		if s.todos[i].ID == id {
+			s.todos[i].Completed = !s.todos[i].Completed
+			return s.todos[i], nil
+		}
+	}
+	return Todo{}, fmt.Errorf("todo with ID %d not found", id)
+}
+
 func ToDoListHandler(w http.ResponseWriter, r *http.Request) {
 	// set up Headers
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	// Handle preflight request
@@ -78,6 +93,24 @@ func ToDoListHandler(w http.ResponseWriter, r *http.Request) {
 		store.AddTodo(todo)
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(todo)
+
+	// used to update a todo list as completed or not
+	case "PUT":
+		var updateReq struct {
+			ID string `json:"id"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		updatedTodo, err := store.ToggleTodo(updateReq.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		json.NewEncoder(w).Encode(updatedTodo)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

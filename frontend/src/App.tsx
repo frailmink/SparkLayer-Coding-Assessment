@@ -73,6 +73,27 @@ function App() {
         }
     };
 
+    const handleToggleTodo = async (id: string) => {
+      try {
+        const response = await fetch('http://localhost:8080/', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update todo');
+        }
+  
+        // Refresh todos list
+        await fetchTodos();
+      } catch (e) {
+        console.error('Error updating todo:', e);
+      }
+    };
+
     // returns the Todos
     return (
         <div className="app">
@@ -83,9 +104,8 @@ function App() {
                 {todos.map((todo) =>
                     <Todo
                         key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
-                        id={todo.id}
-                        title={todo.title}
-                        description={todo.description}
+                        {...todo}
+                        onToggle={() => handleToggleTodo(todo.id)}
                     />
                 )}
             </div>

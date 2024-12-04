@@ -104,25 +104,37 @@ function App() {
             <header className="app-header">
                 <h1>TODO</h1>
             </header>
-            <h2 className="section-header">Tasks Done</h2>
-            <div className="todo-list">
-                {completedTodos.map((todo) =>
-                    <Todo
-                        key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
-                        {...todo}
-                        onToggle={() => handleToggleTodo(todo.id)}
-                    />
-                )}
+            <div className="todo-sections">
+              {completedTodos.length > 0 && (
+                <div className="todo-section">
+                  <h2 className="section-header">Tasks Done</h2>
+                  <div className="todo-list">
+                      {completedTodos.map((todo) =>
+                          <Todo
+                              key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
+                              {...todo}
+                              onToggle={() => handleToggleTodo(todo.id)}
+                          />
+                      )}
+                  </div>
+                </div>
+              )}
             </div>
-            <h2 className="section-header">Tasks To Do</h2>
-            <div className="todo-list">
-                {incompleteTodos.map((todo) =>
-                    <Todo
-                        key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
-                        {...todo}
-                        onToggle={() => handleToggleTodo(todo.id)}
-                    />
-                )}
+            <div className="todo-sections">
+              {incompleteTodos.length > 0 && (
+                <div className="todo-section">
+                  <h2 className="section-header">Tasks To Do</h2>
+                  <div className="todo-list">
+                      {incompleteTodos.map((todo) =>
+                          <Todo
+                              key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
+                              {...todo}
+                              onToggle={() => handleToggleTodo(todo.id)}
+                          />
+                      )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <h2>Add a Todo</h2>

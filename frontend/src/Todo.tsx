@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 
 export type TodoType = {
+  id: string,
   title: string,
   description: string,
 }

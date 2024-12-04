@@ -87,12 +87,16 @@ function App() {
           throw new Error('Failed to update todo');
         }
   
-        // Refresh todos list
+        // refresh todos list
         await fetchTodos();
       } catch (e) {
         console.error('Error updating todo:', e);
       }
     };
+
+    // separates completed todos and incomplete
+    const completedTodos = todos.filter(todo => todo.completed);
+    const incompleteTodos = todos.filter(todo => !todo.completed);
 
     // returns the Todos
     return (
@@ -100,8 +104,9 @@ function App() {
             <header className="app-header">
                 <h1>TODO</h1>
             </header>
+            <h2 className="section-header">Tasks Done</h2>
             <div className="todo-list">
-                {todos.map((todo) =>
+                {completedTodos.map((todo) =>
                     <Todo
                         key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
                         {...todo}
@@ -109,6 +114,17 @@ function App() {
                     />
                 )}
             </div>
+            <h2 className="section-header">Tasks To Do</h2>
+            <div className="todo-list">
+                {incompleteTodos.map((todo) =>
+                    <Todo
+                        key={todo.id} // id added to prevent errors when submitting todos with same title and description as previous ones
+                        {...todo}
+                        onToggle={() => handleToggleTodo(todo.id)}
+                    />
+                )}
+            </div>
+
             <h2>Add a Todo</h2>
             <form onSubmit={handleSubmit}>
                 {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
